@@ -1,18 +1,24 @@
 import { db } from "./db";
 import fs from "fs";
+
 function render(view: string, content: string) {
     const layout = fs.readFileSync("./views/layout.html", "utf8");
     return layout.replace("{{content}}", content);
 }
+
 Bun.serve({
     port: 3000,
     async fetch(req) {
         const url = new URL(req.url);
         // LIST DATA
         if (url.pathname == "/") {
+
             const [rows]: any = await db.query("SELECT * FROM mahasiswa");
+
             let table = "";
+
             rows.forEach((m: any) => {
+
                 table += `
 <tr>
 <td class="p-2">${m.id}</td>
@@ -26,27 +32,43 @@ Bun.serve({
 </tr>
 `
             });
+
             let view = fs.readFileSync("./views/mahasiswa.html", "utf8");
+
             view = view.replace("{{rows}}", table);
+
             return new Response(render("mahasiswa", view), {
                 headers: { "Content-Type": "text/html" }
             });
         }
         // FORM TAMBAH
         if (url.pathname == "/tambah") {
+
+            const [jurusanRows]: any = await db.query("SELECT * FROM jurusan");
+
+            let options = "";
+
+            jurusanRows.forEach((j: any) => {
+                options += `<option value="${j.nama_jurusan}">${j.nama_jurusan}</option>`;
+            });
+
             let view = fs.readFileSync("./views/form.html", "utf8");
+
             view = view
                 .replace("{{action}}", "/simpan")
                 .replace("{{nama}}", "")
-                .replace("{{jurusan}}", "")
+                .replace("{{jurusan_options}}", options)
                 .replace("{{angkatan}}", "");
+
             return new Response(render("form", view), {
                 headers: { "Content-Type": "text/html" }
             });
         }
         // SIMPAN DATA
         if (url.pathname == "/simpan" && req.method == "POST") {
+
             const body = await req.formData();
+
             await db.query(
                 "INSERT INTO mahasiswa (nama,jurusan,angkatan) VALUES (?,?,?)",
                 [
@@ -55,19 +77,12 @@ Bun.serve({
                     body.get("angkatan")
                 ]
             );
+
             return Response.redirect("/", 302);
         }
-        // HAPUS DATA
-        if (url.pathname.startsWith("/hapus/")) {
-            const id = url.pathname.split("/")[2];
-            await db.query(
-                "DELETE FROM mahasiswa WHERE id=?",
-                [id]
-            );
-            return Response.redirect("/", 302);
-        }
-        // EDIT DATA
+        // FORM EDIT
         if (url.pathname.startsWith("/edit/")) {
+
             const id = url.pathname.split("/")[2];
 
             const [rows]: any = await db.query(
@@ -89,9 +104,14 @@ Bun.serve({
                 headers: { "Content-Type": "text/html" }
             });
         }
-        // TAMBAH DATA
+
+        // =====================
+        // UPDATE DATA
+        // =====================
         if (url.pathname.startsWith("/update/") && req.method == "POST") {
+
             const id = url.pathname.split("/")[2];
+
             const body = await req.formData();
 
             await db.query(
@@ -106,7 +126,22 @@ Bun.serve({
 
             return Response.redirect("/", 302);
         }
-        
+
+        // =====================
+        // HAPUS DATA
+        // =====================
+        if (url.pathname.startsWith("/hapus/")) {
+
+            const id = url.pathname.split("/")[2];
+
+            await db.query(
+                "DELETE FROM mahasiswa WHERE id=?",
+                [id]
+            );
+
+            return Response.redirect("/", 302);
+        }
         return new Response("Not Found");
+
     }
 });

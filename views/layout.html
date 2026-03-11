@@ -2,55 +2,17 @@
 <html>
 
 <head>
-    <title>Admin Panel</title>
+    <title>CRUD Mahasiswa</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="bg-gray-100">
-
-    <div class="flex">
-
-        <!-- SIDEBAR -->
-        <div class="w-64 bg-gray-800 text-white min-h-screen">
-
-            <div class="p-4 font-bold text-xl border-b border-gray-700">
-                Admin Panel
-            </div>
-
-            <ul>
-                <li class="p-3 hover:bg-gray-700">
-                    <a href="/">Dashboard</a>
-                </li>
-
-                <li class="p-3 hover:bg-gray-700">
-                    <a href="/mahasiswa">Mahasiswa</a>
-                </li>
-
-                <li class="p-3 hover:bg-gray-700">
-                    <a href="/jurusan">Jurusan</a>
-                </li>
-            </ul>
-
-        </div>
-
-        <!-- CONTENT -->
-        <div class="flex-1">
-
-            <!-- NAVBAR -->
-            <div class="bg-white shadow p-4 flex justify-between">
-                <h1 class="font-bold">Sistem Informasi Kampus</h1>
-                <span>Admin</span>
-            </div>
-
-            <!-- PAGE CONTENT -->
-            <div class="p-6">
-                {{content}}
-            </div>
-
-        </div>
-
+    <div class="bg-blue-600 text-white p-4">
+        <h1 class="text-xl font-bold">Sistem Data Mahasiswa</h1>
     </div>
-
+    <div class="container mx-auto p-6">
+        {{content}}
+    </div>
 </body>
 
 </html>
