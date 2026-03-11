@@ -106,6 +106,7 @@ Bun.serve({
 
             return Response.redirect("/", 302);
         }
+        
         return new Response("Not Found");
     }
 });
